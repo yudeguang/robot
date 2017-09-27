@@ -56,11 +56,17 @@ import (
 )
 
 //剪切板操作对象
-type Clipboard struct {
+type clipboard struct {
+}
+
+//初始化剪贴板
+func NewClipboard() *clipboard {
+	var cli clipboard
+	return &cli
 }
 
 //设置文本到剪切板,设置为nil则表示清空剪切板
-func (this *Clipboard) SetClipboard(val interface{}) error {
+func (this *clipboard) SetClipboard(val interface{}) error {
 	if val == nil {
 		C.SetClipboard(nil)
 	} else {
@@ -74,7 +80,7 @@ func (this *Clipboard) SetClipboard(val interface{}) error {
 }
 
 //从剪切板中获取文本数据
-func (this *Clipboard) GetClipboard() string {
+func (this *clipboard) GetClipboard() string {
 	res := C.GetClipboard()
 	if res == nil {
 		return ""

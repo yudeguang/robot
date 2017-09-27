@@ -329,7 +329,7 @@ func KeyUp(key byte) {
 x,y按屏幕分辨率计算(分辨率，直接查询系统分辨率)
 */
 
-func MoveMouse(x, y int, hasclick bool) {
+func MoveMouseClick(x, y int, hasclick bool) {
 	nRealX := int(x * 65535 / 1440)
 	nRealY := int(y * 65535 / 900)
 	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(nRealX), uintptr(nRealY), 0, 0)
@@ -356,7 +356,7 @@ func MoveMouseDoubleClick(x, y int, hasclick bool) {
 }
 
 //鼠标移动到某个位置，然后点击右键
-func MoveMouseRitht(x, y int) {
+func MoveMouseRithtClick(x, y int) {
 	nRealX := int(x * 65535 / 1440)
 	nRealY := int(y * 65535 / 900)
 	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(nRealX), uintptr(nRealY), 0, 0)
@@ -371,7 +371,7 @@ func MoveMouseRitht(x, y int) {
 //同时按住CTRL LeftMouse
 func CtrlLeftMouse(x, y int, hasclick bool) {
 	KeyDown(VK_CTRL)
-	MoveMouse(x, y, hasclick)
+	MoveMouseClick(x, y, hasclick)
 	KeyUp(VK_CTRL)
 
 }
