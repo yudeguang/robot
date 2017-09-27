@@ -7,67 +7,69 @@ import (
 )
 
 var (
-	modkernel32 = syscall.NewLazyDLL("kernel32.dll")
-
+	modkernel32    = syscall.NewLazyDLL("kernel32.dll")
 	procDeleteFile = modkernel32.NewProc("DeleteFileW")
 )
 
+//时间间隔
+var sleepTime = time.Millisecond * 10
+
 //定义按键编号
 var (
-	VK_SHIFT     = byte(0x10)
-	VK_CTRL      = byte(0x11)
-	VK_END       = byte(0x23)
-	VK_HOME      = byte(0x24)
-	VK_RETURN    = byte(0x0D)
-	VK_CAPS_LOCK = byte(0x14) //CAPS LOCK 键 即大写键
-	VK_MOUSE_R   = byte(0x02) //鼠标右键
+	vK_SHIFT     = byte(0x10)
+	vK_CTRL      = byte(0x11)
+	vK_END       = byte(0x23)
+	vK_HOME      = byte(0x24)
+	vK_RETURN    = byte(0x0D)
+	vK_CAPS_LOCK = byte(0x14) //CAPS LOCK 键 即大写键
+	vK_MOUSE_R   = byte(0x02) //鼠标右键
 
-	VK_DELETE              = byte(0x2E) //DELETE 键
-	VK_MULTIPLICATION_SIGN = byte(0x6A) //(*) 键
-	VK_PLUS_SIGN           = byte(0x6B) //(+) 键
-	VK_ENTER               = byte(0x6C) //ENTER 键
-	VK_MINUS_SIGN          = byte(0x6D) //(-) 键
-	VK_DECIMAL_POINT       = byte(0x6E) //(.) 键
-	VK_DIVISION_SIGN       = byte(0x6F) //(/) 键
+	vK_DELETE              = byte(0x2E) //DELETE 键
+	vK_MULTIPLICATION_SIGN = byte(0x6A) //(*) 键
+	vK_PLUS_SIGN           = byte(0x6B) //(+) 键
+	vK_ENTER               = byte(0x6C) //ENTER 键
+	vK_MINUS_SIGN          = byte(0x6D) //(-) 键
+	vK_DECIMAL_POINT       = byte(0x6E) //(.) 键
+	vK_DIVISION_SIGN       = byte(0x6F) //(/) 键
 
-	VK_a = byte(0x41)
-	VK_b = byte(0x42)
-	VK_c = byte(0x43)
-	VK_d = byte(0x44)
-	VK_e = byte(0x45)
-	VK_f = byte(0x46)
-	VK_g = byte(0x47)
-	VK_h = byte(0x48)
-	VK_i = byte(0x49)
-	VK_j = byte(0x4A)
-	VK_k = byte(0x4B)
-	VK_l = byte(0x4C)
-	VK_m = byte(0x4D)
-	VK_n = byte(0x4E)
-	VK_o = byte(0x4F)
-	VK_p = byte(0x50)
-	VK_q = byte(0x51)
-	VK_r = byte(0x52)
-	VK_s = byte(0x53)
-	VK_t = byte(0x54)
-	VK_u = byte(0x55)
-	VK_v = byte(0x56)
-	VK_w = byte(0x57)
-	VK_x = byte(0x58)
-	VK_y = byte(0x59)
+	vK_a = byte(0x41)
+	vK_b = byte(0x42)
+	vK_c = byte(0x43)
+	vK_d = byte(0x44)
+	vK_e = byte(0x45)
+	vK_f = byte(0x46)
+	vK_g = byte(0x47)
+	vK_h = byte(0x48)
+	vK_i = byte(0x49)
+	vK_j = byte(0x4A)
+	vK_k = byte(0x4B)
+	vK_l = byte(0x4C)
+	vK_m = byte(0x4D)
+	vK_n = byte(0x4E)
+	vK_o = byte(0x4F)
+	vK_p = byte(0x50)
+	vK_q = byte(0x51)
+	vK_r = byte(0x52)
+	vK_s = byte(0x53)
+	vK_t = byte(0x54)
+	vK_u = byte(0x55)
+	vK_v = byte(0x56)
+	vK_w = byte(0x57)
+	vK_x = byte(0x58)
+	vK_y = byte(0x59)
 
-	// VK_z = byte(0x59) Z不知道用什么表示
+	// vK_z = byte(0x59) Z不知道用什么表示
 
-	VK_0 = byte(0x60)
-	VK_1 = byte(0x61)
-	VK_2 = byte(0x62)
-	VK_3 = byte(0x63)
-	VK_4 = byte(0x64)
-	VK_5 = byte(0x65)
-	VK_6 = byte(0x66)
-	VK_7 = byte(0x67)
-	VK_8 = byte(0x68)
-	VK_9 = byte(0x69)
+	vK_0 = byte(0x60)
+	vK_1 = byte(0x61)
+	vK_2 = byte(0x62)
+	vK_3 = byte(0x63)
+	vK_4 = byte(0x64)
+	vK_5 = byte(0x65)
+	vK_6 = byte(0x66)
+	vK_7 = byte(0x67)
+	vK_8 = byte(0x68)
+	vK_9 = byte(0x69)
 )
 var (
 	moduser32         = syscall.NewLazyDLL("User32.dll")
@@ -81,160 +83,160 @@ func KeyboardWrite(word string) (err error) {
 	for _, v := range word {
 		switch string(v) {
 		case "-":
-			Key(VK_MINUS_SIGN)
+			Key(vK_MINUS_SIGN)
 		case "a":
-			Key(VK_a)
+			Key(vK_a)
 		case "b":
-			Key(VK_b)
+			Key(vK_b)
 		case "c":
-			Key(VK_c)
+			Key(vK_c)
 		case "d":
-			Key(VK_d)
+			Key(vK_d)
 		case "e":
-			Key(VK_e)
+			Key(vK_e)
 		case "f":
-			Key(VK_f)
+			Key(vK_f)
 		case "g":
-			Key(VK_g)
+			Key(vK_g)
 		case "h":
-			Key(VK_h)
+			Key(vK_h)
 		case "i":
-			Key(VK_i)
+			Key(vK_i)
 		case "j":
-			Key(VK_j)
+			Key(vK_j)
 		case "k":
-			Key(VK_k)
+			Key(vK_k)
 		case "l":
-			Key(VK_l)
+			Key(vK_l)
 		case "m":
-			Key(VK_m)
+			Key(vK_m)
 		case "n":
-			Key(VK_n)
+			Key(vK_n)
 		case "o":
-			Key(VK_o)
+			Key(vK_o)
 		case "p":
-			Key(VK_p)
+			Key(vK_p)
 		case "q":
-			Key(VK_q)
+			Key(vK_q)
 		case "r":
-			Key(VK_r)
+			Key(vK_r)
 		case "s":
-			Key(VK_s)
+			Key(vK_s)
 		case "t":
-			Key(VK_t)
+			Key(vK_t)
 		case "u":
-			Key(VK_u)
+			Key(vK_u)
 		case "v":
-			Key(VK_v)
+			Key(vK_v)
 		case "w":
-			Key(VK_w)
+			Key(vK_w)
 		case "x":
-			Key(VK_x)
+			Key(vK_x)
 		case "y":
-			Key(VK_y)
+			Key(vK_y)
 		case "z":
 			KeyDown('Z')
 			KeyUp('Z')
 
 		case "A":
 
-			Key(VK_a)
+			Key(vK_a)
 
 		case "B":
 
-			Key(VK_b)
+			Key(vK_b)
 
 		case "C":
 
-			Key(VK_c)
+			Key(vK_c)
 
 		case "D":
 
-			Key(VK_d)
+			Key(vK_d)
 
 		case "E":
 
-			Key(VK_e)
+			Key(vK_e)
 
 		case "F":
 
-			Key(VK_f)
+			Key(vK_f)
 
 		case "G":
 
-			Key(VK_g)
+			Key(vK_g)
 
 		case "H":
 
-			Key(VK_h)
+			Key(vK_h)
 
 		case "I":
 
-			Key(VK_i)
+			Key(vK_i)
 
 		case "J":
 
-			Key(VK_j)
+			Key(vK_j)
 
 		case "K":
 
-			Key(VK_k)
+			Key(vK_k)
 
 		case "L":
 
-			Key(VK_l)
+			Key(vK_l)
 
 		case "M":
 
-			Key(VK_m)
+			Key(vK_m)
 
 		case "N":
 
-			Key(VK_n)
+			Key(vK_n)
 
 		case "O":
 
-			Key(VK_o)
+			Key(vK_o)
 
 		case "P":
 
-			Key(VK_p)
+			Key(vK_p)
 
 		case "Q":
 
-			Key(VK_q)
+			Key(vK_q)
 
 		case "R":
 
-			Key(VK_r)
+			Key(vK_r)
 
 		case "S":
 
-			Key(VK_s)
+			Key(vK_s)
 
 		case "T":
 
-			Key(VK_t)
+			Key(vK_t)
 
 		case "U":
 
-			Key(VK_u)
+			Key(vK_u)
 
 		case "V":
 
-			Key(VK_v)
+			Key(vK_v)
 
 		case "W":
 
-			Key(VK_w)
+			Key(vK_w)
 
 		case "X":
 
-			Key(VK_x)
+			Key(vK_x)
 
 		case "Y":
 
-			Key(VK_y)
+			Key(vK_y)
 
 		case "Z":
 
@@ -242,25 +244,25 @@ func KeyboardWrite(word string) (err error) {
 			KeyUp('Z')
 
 		case "0":
-			Key(VK_0)
+			Key(vK_0)
 		case "1":
-			Key(VK_1)
+			Key(vK_1)
 		case "2":
-			Key(VK_2)
+			Key(vK_2)
 		case "3":
-			Key(VK_3)
+			Key(vK_3)
 		case "4":
-			Key(VK_4)
+			Key(vK_4)
 		case "5":
-			Key(VK_5)
+			Key(vK_5)
 		case "6":
-			Key(VK_6)
+			Key(vK_6)
 		case "7":
-			Key(VK_7)
+			Key(vK_7)
 		case "8":
-			Key(VK_8)
+			Key(vK_8)
 		case "9":
-			Key(VK_9)
+			Key(vK_9)
 		default:
 			return fmt.Errorf("转换失败，遇到未定义字符")
 
@@ -276,42 +278,42 @@ func Key(key byte) {
 }
 
 func CtrlA() { //按下 ctrl+a 全选
-	KeyDown(VK_CTRL)
+	KeyDown(vK_CTRL)
 	KeyDown('A')
 	KeyUp('A')
-	KeyUp(VK_CTRL)
-	time.Sleep(time.Millisecond * 100)
+	KeyUp(vK_CTRL)
+	time.Sleep(sleepTime)
 }
 
 func CtrlC() { //按下 ctrl+C 复制
-	KeyDown(VK_CTRL)
+	KeyDown(vK_CTRL)
 	KeyDown('C')
 	KeyUp('C')
-	KeyUp(VK_CTRL)
-	time.Sleep(time.Millisecond * 100)
+	KeyUp(vK_CTRL)
+	time.Sleep(sleepTime)
 }
 
 func CtrlS() { //按下 ctrl+S 保存
-	KeyDown(VK_CTRL)
+	KeyDown(vK_CTRL)
 	KeyDown('S')
 	KeyUp('S')
-	KeyUp(VK_CTRL)
-	time.Sleep(time.Millisecond * 100)
+	KeyUp(vK_CTRL)
+	time.Sleep(sleepTime)
 }
 
 func CtrlV() { //按下 ctrl+V 粘贴
-	KeyDown(VK_CTRL)
+	KeyDown(vK_CTRL)
 	KeyDown('V')
 	KeyUp('V')
-	KeyUp(VK_CTRL)
-	time.Sleep(time.Millisecond * 100)
+	KeyUp(vK_CTRL)
+	time.Sleep(sleepTime)
 }
 func CtrlX() { //按下 ctrl+X 剪切
-	KeyDown(VK_CTRL)
+	KeyDown(vK_CTRL)
 	KeyDown('X')
 	KeyUp('X')
-	KeyUp(VK_CTRL)
-	time.Sleep(time.Millisecond * 100)
+	KeyUp(vK_CTRL)
+	time.Sleep(sleepTime)
 }
 
 //按下键
@@ -328,50 +330,43 @@ func KeyUp(key byte) {
 移动鼠标移动到x,y坐标,hasclick表明是否需要点击一下
 x,y按屏幕分辨率计算(分辨率，直接查询系统分辨率)
 */
-
-func MoveMouseClick(x, y int, hasclick bool) {
-	nRealX := int(x * 65535 / 1440)
-	nRealY := int(y * 65535 / 900)
-	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(nRealX), uintptr(nRealY), 0, 0)
-	if hasclick {
-		procMouseEvent.Call(uintptr(0x0002), uintptr(nRealX), uintptr(nRealY), 0, 0)
-		procMouseEvent.Call(uintptr(0x0004), uintptr(nRealX), uintptr(nRealY), 0, 0)
-	}
-	//都延时1秒
-	time.Sleep(10 * time.Millisecond)
+func MoveMouse(X, Y int) {
+	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
+	time.Sleep(sleepTime)
 }
-func MoveMouseDoubleClick(x, y int, hasclick bool) {
-	nRealX := int(x * 65535 / 1440)
-	nRealY := int(y * 65535 / 900)
-	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(nRealX), uintptr(nRealY), 0, 0)
-	if hasclick {
-		procMouseEvent.Call(uintptr(0x0002), uintptr(nRealX), uintptr(nRealY), 0, 0)
-		procMouseEvent.Call(uintptr(0x0004), uintptr(nRealX), uintptr(nRealY), 0, 0)
-		time.Sleep(100 * time.Millisecond)
-		procMouseEvent.Call(uintptr(0x0002), uintptr(nRealX), uintptr(nRealY), 0, 0)
-		procMouseEvent.Call(uintptr(0x0004), uintptr(nRealX), uintptr(nRealY), 0, 0)
-	}
-	//都延时1秒
-	time.Sleep(1 * time.Second)
+
+//鼠标移动到某个位置，默认是左侧鼠标点击
+func MoveMouseClick(X, Y int) {
+	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
+	procMouseEvent.Call(uintptr(0x0002), uintptr(X), uintptr(Y), 0, 0)
+	procMouseEvent.Call(uintptr(0x0004), uintptr(X), uintptr(Y), 0, 0)
+	time.Sleep(sleepTime)
 }
 
 //鼠标移动到某个位置，然后点击右键
-func MoveMouseRithtClick(x, y int) {
-	nRealX := int(x * 65535 / 1440)
-	nRealY := int(y * 65535 / 900)
-	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(nRealX), uintptr(nRealY), 0, 0)
+func MoveMouseRithtClick(X, Y int) {
+	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
+	procMouseEvent.Call(uintptr(0x0008), uintptr(X), uintptr(Y), 0, 0)
+	procMouseEvent.Call(uintptr(0x0010), uintptr(X), uintptr(Y), 0, 0)
+	time.Sleep(sleepTime)
+}
 
-	procMouseEvent.Call(uintptr(0x0008), uintptr(nRealX), uintptr(nRealY), 0, 0)
-	procMouseEvent.Call(uintptr(0x0010), uintptr(nRealX), uintptr(nRealY), 0, 0)
+func MoveMouseDoubleClick(X, Y int) {
+	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
 
-	//都延时1秒
-	time.Sleep(10 * time.Millisecond)
+	procMouseEvent.Call(uintptr(0x0002), uintptr(X), uintptr(Y), 0, 0)
+	procMouseEvent.Call(uintptr(0x0004), uintptr(X), uintptr(Y), 0, 0)
+	time.Sleep(sleepTime)
+
+	procMouseEvent.Call(uintptr(0x0002), uintptr(X), uintptr(Y), 0, 0)
+	procMouseEvent.Call(uintptr(0x0004), uintptr(X), uintptr(Y), 0, 0)
+	time.Sleep(sleepTime)
 }
 
 //同时按住CTRL LeftMouse
-func CtrlLeftMouse(x, y int, hasclick bool) {
-	KeyDown(VK_CTRL)
-	MoveMouseClick(x, y, hasclick)
-	KeyUp(VK_CTRL)
+func CtrlLeftMouseClick(x, y int, hasclick bool) {
+	KeyDown(vK_CTRL)
+	MoveMouseClick(x, y)
+	KeyUp(vK_CTRL)
 
 }
