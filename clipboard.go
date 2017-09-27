@@ -60,7 +60,7 @@ type Clipboard struct {
 }
 
 //设置文本到剪切板,设置为nil则表示清空剪切板
-func (this *Clipboard) NewClipboard(val interface{}) error {
+func (this *Clipboard) SetClipboard(val interface{}) error {
 	if val == nil {
 		C.SetClipboard(nil)
 	} else {
