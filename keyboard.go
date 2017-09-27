@@ -14,6 +14,18 @@ var (
 //时间间隔
 var sleepTime = time.Millisecond * 10
 
+//把默认的分辨率写成1440X900
+var screen_whith = 1440
+var screen_height = 900
+
+//设置目标电脑屏幕分辨率
+func NewScreenSize(whith, height int) {
+	if whith > 0 && height > 0 {
+		screen_whith = whith
+		screen_height = height
+	}
+}
+
 //定义按键编号
 var (
 	vK_SHIFT     = byte(0x10)
@@ -331,12 +343,16 @@ func KeyUp(key byte) {
 x,y按屏幕分辨率计算(分辨率，直接查询系统分辨率)
 */
 func MoveMouse(X, Y int) {
+	X = int(X * 65535 / screen_whith)
+	Y = int(Y * 65535 / screen_height)
 	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
 	time.Sleep(sleepTime)
 }
 
 //鼠标移动到某个位置，默认是左侧鼠标点击
 func MoveMouseClick(X, Y int) {
+	X = int(X * 65535 / screen_whith)
+	Y = int(Y * 65535 / screen_height)
 	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
 	procMouseEvent.Call(uintptr(0x0002), uintptr(X), uintptr(Y), 0, 0)
 	procMouseEvent.Call(uintptr(0x0004), uintptr(X), uintptr(Y), 0, 0)
@@ -345,6 +361,8 @@ func MoveMouseClick(X, Y int) {
 
 //鼠标移动到某个位置，然后点击右键
 func MoveMouseRithtClick(X, Y int) {
+	X = int(X * 65535 / screen_whith)
+	Y = int(Y * 65535 / screen_height)
 	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
 	procMouseEvent.Call(uintptr(0x0008), uintptr(X), uintptr(Y), 0, 0)
 	procMouseEvent.Call(uintptr(0x0010), uintptr(X), uintptr(Y), 0, 0)
@@ -352,6 +370,9 @@ func MoveMouseRithtClick(X, Y int) {
 }
 
 func MoveMouseDoubleClick(X, Y int) {
+	X = int(X * 65535 / screen_whith)
+	Y = int(Y * 65535 / screen_height)
+
 	procMouseEvent.Call(uintptr(0x0001|0x8000), uintptr(X), uintptr(Y), 0, 0)
 
 	procMouseEvent.Call(uintptr(0x0002), uintptr(X), uintptr(Y), 0, 0)
