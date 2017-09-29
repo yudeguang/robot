@@ -1,31 +1,25 @@
 package robot
 
 import (
-	"fmt"
 	"strings"
 	"syscall"
 	"time"
 )
 
+//键盘及鼠标单次操作时间间隔
+const sleepTime = time.Millisecond * 10
+
 var (
-	modkernel32    = syscall.NewLazyDLL("kernel32.dll")
-	procDeleteFile = modkernel32.NewProc("DeleteFileW")
+	modkernel32       = syscall.NewLazyDLL("kernel32.dll")
+	moduser32         = syscall.NewLazyDLL("User32.dll")
+	user32dll         = syscall.MustLoadDLL("user32.dll")
+	procDeleteFile    = modkernel32.NewProc("DeleteFileW")
+	procMouseEvent    = moduser32.NewProc("mouse_event")
+	procKeyboardEvent = moduser32.NewProc("keybd_event")
+	funGetScreen      = user32dll.MustFindProc("GetSystemMetrics")
+	//分辨率
+	screen_whith, screen_height int
 )
-
-//时间间隔
-var sleepTime = time.Millisecond * 10
-
-//把默认的分辨率写成1440X900
-var screen_whith = 1440
-var screen_height = 900
-
-//设置目标电脑屏幕分辨率
-func NewScreenSize(whith, height int) {
-	if whith > 0 && height > 0 {
-		screen_whith = whith
-		screen_height = height
-	}
-}
 
 //定义按键编号,仅列出常用的一些符号
 var (
@@ -116,205 +110,22 @@ var (
 	vK_8 = byte(0x68)
 	vK_9 = byte(0x69)
 )
-var (
-	moduser32         = syscall.NewLazyDLL("User32.dll")
-	procMouseEvent    = moduser32.NewProc("mouse_event")
-	procKeyboardEvent = moduser32.NewProc("keybd_event")
-)
 
-//此函数仅处理0-9 a-z(含大写)以及-号（因为此程序字符只包含上述部分）
-func KeyboardWrite(word string) (err error) {
-
-	for _, v := range word {
-		switch string(v) {
-		case "-":
-			Key(vK_MINUS_SIGN)
-		case "a":
-			Key(vK_a)
-		case "b":
-			Key(vK_b)
-		case "c":
-			Key(vK_c)
-		case "d":
-			Key(vK_d)
-		case "e":
-			Key(vK_e)
-		case "f":
-			Key(vK_f)
-		case "g":
-			Key(vK_g)
-		case "h":
-			Key(vK_h)
-		case "i":
-			Key(vK_i)
-		case "j":
-			Key(vK_j)
-		case "k":
-			Key(vK_k)
-		case "l":
-			Key(vK_l)
-		case "m":
-			Key(vK_m)
-		case "n":
-			Key(vK_n)
-		case "o":
-			Key(vK_o)
-		case "p":
-			Key(vK_p)
-		case "q":
-			Key(vK_q)
-		case "r":
-			Key(vK_r)
-		case "s":
-			Key(vK_s)
-		case "t":
-			Key(vK_t)
-		case "u":
-			Key(vK_u)
-		case "v":
-			Key(vK_v)
-		case "w":
-			Key(vK_w)
-		case "x":
-			Key(vK_x)
-		case "y":
-			Key(vK_y)
-		case "z":
-			KeyDown('Z')
-			KeyUp('Z')
-
-		case "A":
-
-			Key(vK_a)
-
-		case "B":
-
-			Key(vK_b)
-
-		case "C":
-
-			Key(vK_c)
-
-		case "D":
-
-			Key(vK_d)
-
-		case "E":
-
-			Key(vK_e)
-
-		case "F":
-
-			Key(vK_f)
-
-		case "G":
-
-			Key(vK_g)
-
-		case "H":
-
-			Key(vK_h)
-
-		case "I":
-
-			Key(vK_i)
-
-		case "J":
-
-			Key(vK_j)
-
-		case "K":
-
-			Key(vK_k)
-
-		case "L":
-
-			Key(vK_l)
-
-		case "M":
-
-			Key(vK_m)
-
-		case "N":
-
-			Key(vK_n)
-
-		case "O":
-
-			Key(vK_o)
-
-		case "P":
-
-			Key(vK_p)
-
-		case "Q":
-
-			Key(vK_q)
-
-		case "R":
-
-			Key(vK_r)
-
-		case "S":
-
-			Key(vK_s)
-
-		case "T":
-
-			Key(vK_t)
-
-		case "U":
-
-			Key(vK_u)
-
-		case "V":
-
-			Key(vK_v)
-
-		case "W":
-
-			Key(vK_w)
-
-		case "X":
-
-			Key(vK_x)
-
-		case "Y":
-
-			Key(vK_y)
-
-		case "Z":
-
-			KeyDown('Z')
-			KeyUp('Z')
-
-		case "0":
-			Key(vK_0)
-		case "1":
-			Key(vK_1)
-		case "2":
-			Key(vK_2)
-		case "3":
-			Key(vK_3)
-		case "4":
-			Key(vK_4)
-		case "5":
-			Key(vK_5)
-		case "6":
-			Key(vK_6)
-		case "7":
-			Key(vK_7)
-		case "8":
-			Key(vK_8)
-		case "9":
-			Key(vK_9)
-		default:
-			return fmt.Errorf("转换失败，遇到未定义字符")
-
-		}
-	}
-	return nil
+//初始化屏幕分辨率
+func init() {
+	cx, _, _ := funGetScreen.Call(0)
+	cy, _, _ := funGetScreen.Call(1)
+	screen_whith = int(cx)
+	screen_height = int(cy)
 }
+
+// //设置目标电脑屏幕分辨率
+// func NewScreenSize(whith, height int) {
+// 	if whith > 0 && height > 0 {
+// 		screen_whith = whith
+// 		screen_height = height
+// 	}
+// }
 
 //按下键
 func KeyDown(key byte) {
@@ -324,6 +135,12 @@ func KeyDown(key byte) {
 //释放键
 func KeyUp(key byte) {
 	procKeyboardEvent.Call(uintptr(key), uintptr(0), uintptr(2), 0)
+}
+
+//同时按下键以及释放键两个动作
+func Key(key byte) {
+	KeyDown(key)
+	KeyUp(key)
 }
 
 //用文本的方式输入
@@ -421,13 +238,8 @@ func Press(key string) {
 	}
 }
 
-//同时按下键以及释放键两个动作
-func Key(key byte) {
-	KeyDown(key)
-	KeyUp(key)
-}
-
-func CtrlA() { //按下 ctrl+a 全选
+//按下 ctrl+a 全选
+func CtrlA() {
 	KeyDown(vK_CTRL)
 	KeyDown('A')
 	KeyUp('A')
@@ -435,7 +247,8 @@ func CtrlA() { //按下 ctrl+a 全选
 	time.Sleep(sleepTime)
 }
 
-func CtrlC() { //按下 ctrl+C 复制
+//按下 ctrl+C 复制
+func CtrlC() {
 	KeyDown(vK_CTRL)
 	KeyDown('C')
 	KeyUp('C')
@@ -443,7 +256,8 @@ func CtrlC() { //按下 ctrl+C 复制
 	time.Sleep(sleepTime)
 }
 
-func CtrlS() { //按下 ctrl+S 保存
+//按下 ctrl+S 保存
+func CtrlS() {
 	KeyDown(vK_CTRL)
 	KeyDown('S')
 	KeyUp('S')
@@ -451,14 +265,17 @@ func CtrlS() { //按下 ctrl+S 保存
 	time.Sleep(sleepTime)
 }
 
-func CtrlV() { //按下 ctrl+V 粘贴
+//按下 ctrl+V 粘贴
+func CtrlV() {
 	KeyDown(vK_CTRL)
 	KeyDown('V')
 	KeyUp('V')
 	KeyUp(vK_CTRL)
 	time.Sleep(sleepTime)
 }
-func CtrlX() { //按下 ctrl+X 剪切
+
+//按下 ctrl+X 剪切
+func CtrlX() {
 	KeyDown(vK_CTRL)
 	KeyDown('X')
 	KeyUp('X')
@@ -473,10 +290,7 @@ func CtrlLeftMouseClick(x, y int, hasclick bool) {
 	KeyUp(vK_CTRL)
 }
 
-/*
-移动鼠标移动到x,y坐标,hasclick表明是否需要点击一下
-x,y按屏幕分辨率计算(分辨率，直接查询系统分辨率)
-*/
+//移动鼠标移动到x,y坐标
 func MoveMouse(X, Y int) {
 	X = int(X * 65535 / screen_whith)
 	Y = int(Y * 65535 / screen_height)
@@ -484,7 +298,7 @@ func MoveMouse(X, Y int) {
 	time.Sleep(sleepTime)
 }
 
-//鼠标移动到某个位置，默认是左侧鼠标点击
+//鼠标移动到x,y坐标并点击，默认是左侧鼠标点击
 func MoveMouseClick(X, Y int) {
 	X = int(X * 65535 / screen_whith)
 	Y = int(Y * 65535 / screen_height)
@@ -504,6 +318,7 @@ func MoveMouseRithtClick(X, Y int) {
 	time.Sleep(sleepTime)
 }
 
+//鼠标移动到x,y坐标并双击，默认是左侧鼠标点击
 func MoveMouseDoubleClick(X, Y int) {
 	X = int(X * 65535 / screen_whith)
 	Y = int(Y * 65535 / screen_height)
