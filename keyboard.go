@@ -113,19 +113,15 @@ var (
 
 //初始化屏幕分辨率
 func init() {
-	cx, _, _ := funGetScreen.Call(0)
-	cy, _, _ := funGetScreen.Call(1)
-	screen_whith = int(cx)
-	screen_height = int(cy)
+	screen_whith, screen_height = GetScreenSize()
 }
 
-// //设置目标电脑屏幕分辨率
-// func NewScreenSize(whith, height int) {
-// 	if whith > 0 && height > 0 {
-// 		screen_whith = whith
-// 		screen_height = height
-// 	}
-// }
+//获得屏幕分辨率,程序运行过程中，有时候屏幕分辨率会发生变化，故提供此函数
+func GetScreenSize() (width, height int) {
+	cx, _, _ := funGetScreen.Call(0)
+	cy, _, _ := funGetScreen.Call(1)
+	return int(cx), int(cy)
+}
 
 //按下键
 func KeyDown(key byte) {
