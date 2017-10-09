@@ -59,7 +59,7 @@ import (
 type clipboard struct {
 }
 
-//初始化剪贴板
+//初始化剪贴板,注意此剪贴板是针对OS全局唯一的，即便多初始化几次，不会产生多个副本
 func NewClipboard() *clipboard {
 	var cli clipboard
 	return &cli

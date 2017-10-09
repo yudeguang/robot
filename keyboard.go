@@ -7,7 +7,9 @@ import (
 )
 
 //键盘及鼠标单次操作时间间隔
-const sleepTime = time.Millisecond * 10
+var sleepTime time.Duration
+
+//  = time.Millisecond * 10
 
 var (
 	modkernel32       = syscall.NewLazyDLL("kernel32.dll")
@@ -111,16 +113,22 @@ var (
 	vK_9 = byte(0x69)
 )
 
-//初始化屏幕分辨率
+//初始化屏幕分辨率及默认的时间间隔
 func init() {
 	screen_whith, screen_height = GetScreenSize()
+	sleepTime = time.Millisecond * 10
 }
 
-//获得屏幕分辨率,程序运行过程中，有时候屏幕分辨率会发生变化，故提供此函数
+//获得屏幕分辨率,程序运行过程中，有时候屏幕分辨率会发生变化，故提供此函数,方便终止程序
 func GetScreenSize() (width, height int) {
 	cx, _, _ := funGetScreen.Call(0)
 	cy, _, _ := funGetScreen.Call(1)
 	return int(cx), int(cy)
+}
+
+//调整每个动作之间的时间间隔
+func SetSleepTime(millisecond int) {
+	sleepTime = time.Millisecond * (time.Duration(millisecond))
 }
 
 //按下键
