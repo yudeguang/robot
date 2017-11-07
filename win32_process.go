@@ -104,7 +104,7 @@ func FindEXE(name string) bool {
 		log.Fatal(err)
 	}
 	for _, v := range processlist {
-		if strings.ToLower(v.PName) == "name" {
+		if strings.ToLower(v.PName) == strings.ToLower(name) {
 			return true
 		}
 	}
