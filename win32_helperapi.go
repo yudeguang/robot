@@ -4,7 +4,7 @@ Package 创建WINDOWS服务的相关功能
 package robot
 
 import (
-	"C"
+	//"C"
 	"errors"
 	"fmt"
 	"log"
